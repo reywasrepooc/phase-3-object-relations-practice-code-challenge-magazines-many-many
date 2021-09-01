@@ -6,8 +6,18 @@ class Magazine < ActiveRecord::Base
     readers.all.pluck(:email).join ";"
   end
 
-  def self.most_popular
-    subscribers = all.map { |mag| mag.subscriptions.count }.max
-    subscribers.max
+  def subscription_count
+    subscriptions.count
   end
+
+  def self.most_popular
+    subscribers = all.map(&:subscription_count).max
+    all.find { |mag| mag.subscription_count == subscribers }
+  end
+
+  def self.least_popular
+    least_popular = all.map(&:subscription_count).min
+    all.find { |mag| mag.subscription_count == least_popular }
+  end
+
 end
